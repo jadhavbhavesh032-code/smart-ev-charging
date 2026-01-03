@@ -1,0 +1,24 @@
+<h2>My Charging Stations</h2>
+
+<table border="1">
+    <tr>
+        <th>Name</th>
+        <th>Location</th>
+        <th>Chargers</th>
+        <th>Price</th>
+        <th>Green Score</th>
+    </tr>
+
+    {% for s in stations %}
+    <tr>
+        <td>{{ s[0] }}</td>
+        <td>{{ s[1] }}</td>
+        <td>{{ s[2] }}</td>
+        <td>{{ s[3] }}</td>
+        <td>{{ s[4] }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+<a href="/owner/add-station">Add New Station</a><br>
+<a href="/logout">Logout</a>

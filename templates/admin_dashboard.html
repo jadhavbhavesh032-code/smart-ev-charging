@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Dashboard</title>
+</head>
+<body>
+
+<h1>Admin Dashboard</h1>
+
+<h3>Platform Overview</h3>
+<ul>
+    <li><b>Total Users:</b> {{ total_users }}</li>
+    <li><b>Total Charging Stations:</b> {{ total_stations }}</li>
+    <li><b>Total Charging Sessions:</b> {{ total_sessions }}</li>
+    <li><b>Total Revenue Generated:</b> ₹{{ total_revenue }}</li>
+</ul>
+
+<h3>Charging Sessions</h3>
+
+<table border="1">
+<tr>
+    <th>Station</th>
+    <th>Units</th>
+    <th>Amount</th>
+    <th>Transaction Hash</th>
+    <th>Status</th>
+</tr>
+
+{% for s in sessions %}
+<tr>
+    <td>{{ s[0] }}</td>
+    <td>{{ s[1] }}</td>
+    <td>{{ s[2] }}</td>
+    <td>{{ s[3] }}</td>
+    <td>{{ s[4] }}</td>
+</tr>
+{% endfor %}
+</table>
+
+<br>
+<a href="/admin/logout">Logout</a>
+
+</body>
+</html>

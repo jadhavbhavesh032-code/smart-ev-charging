@@ -1,0 +1,15 @@
+<h2>Recommended Charging Station</h2>
+
+{% if station %}
+    <p><b>Name:</b> {{ station[0] }}</p>
+    <p><b>Location:</b> {{ station[1] }}</p>
+    <p><b>Chargers:</b> {{ station[2] }}</p>
+    <p><b>Price:</b> {{ station[3] }}</p>
+    <p><b>Green Score:</b> {{ station[4] }}</p>
+{% else %}
+    <p>No suitable charging station found.</p>
+{% endif %}
+
+<a href="/user/recommend">Try Again</a>
+<br>
+<a href="/user/dashboard">Go to Dashboard</a>

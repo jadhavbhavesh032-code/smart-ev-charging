@@ -1,0 +1,25 @@
+<h2>Charging History</h2>
+
+<table border="1">
+<tr>
+    <th>Station</th>
+    <th>Units</th>
+    <th>Amount</th>
+    <th>Transaction Hash</th>
+    <th>Status</th>
+</tr>
+
+{% for h in history %}
+<tr>
+    <td>{{ h[0] }}</td>
+    <td>{{ h[1] }}</td>
+    <td>{{ h[2] }}</td>
+    <td>{{ h[3] }}</td>
+    <td>{{ h[4] }}</td>
+</tr>
+{% endfor %}
+</table>
+
+<a href="/user/stations">Back to Stations</a>
+<a href="/user/dashboard">⬅ Back to Dashboard</a>
+<br><br>
