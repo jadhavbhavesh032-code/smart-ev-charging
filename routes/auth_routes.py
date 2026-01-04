@@ -40,13 +40,16 @@ def login():
         conn = get_db()
         cur = conn.cursor()
         cur.execute(
-            "SELECT id, role FROM users WHERE lower(email)=? AND password=?",
+            "SELECT id, role, blacklisted FROM users WHERE lower(email)=? AND password=?",
             (email, password)
         )
         user = cur.fetchone()
         conn.close()
 
         if user:
+            # user[2] is blacklisted flag
+            if len(user) > 2 and user[2]:
+                return "Account is blacklisted"
             session["user_id"] = user[0]
             session["role"] = user[1]
 

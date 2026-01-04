@@ -96,6 +96,66 @@ def admin_stations():
 
     return render_template("admin_stations.html", stations=stations)
 
+
+@admin_bp.route('/admin/users')
+def admin_users():
+    if not session.get("admin_logged_in"):
+        return redirect("/admin/login")
+
+    conn = get_db()
+    cur = conn.cursor()
+    cur.execute("SELECT id, name, email, role, blacklisted FROM users ORDER BY id DESC")
+    users = cur.fetchall()
+    conn.close()
+
+    return render_template('admin_users.html', users=users)
+
+
+@admin_bp.route('/admin/user-edit/<int:user_id>', methods=['GET', 'POST'])
+def admin_user_edit(user_id):
+    if not session.get("admin_logged_in"):
+        return redirect('/admin/login')
+
+    conn = get_db()
+    cur = conn.cursor()
+
+    if request.method == 'POST':
+        name = request.form.get('name').strip()
+        email = request.form.get('email').strip().lower()
+        role = request.form.get('role').strip()
+        blacklisted = 1 if request.form.get('blacklisted') == 'on' else 0
+
+        cur.execute("UPDATE users SET name=?, email=?, role=?, blacklisted=? WHERE id=?",
+                    (name, email, role, blacklisted, user_id))
+        conn.commit()
+        conn.close()
+        return redirect('/admin/users')
+
+    cur.execute("SELECT id, name, email, role, blacklisted FROM users WHERE id=?", (user_id,))
+    user = cur.fetchone()
+    conn.close()
+    if not user:
+        return redirect('/admin/users')
+
+    return render_template('admin_user_edit.html', user=user)
+
+
+@admin_bp.route('/admin/user-blacklist/<int:user_id>', methods=['POST'])
+def admin_user_blacklist(user_id):
+    if not session.get("admin_logged_in"):
+        return {"error": "Unauthorized"}, 403
+
+    action = request.form.get('action')
+    conn = get_db()
+    cur = conn.cursor()
+    if action == 'blacklist':
+        cur.execute('UPDATE users SET blacklisted=1 WHERE id=?', (user_id,))
+    else:
+        cur.execute('UPDATE users SET blacklisted=0 WHERE id=?', (user_id,))
+    conn.commit()
+    conn.close()
+    return redirect('/admin/users')
+
 @admin_bp.route("/admin/approve-station/<int:station_id>")
 def approve_station(station_id):
     if not session.get("admin_logged_in"):

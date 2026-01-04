@@ -32,7 +32,8 @@ def init_db():
         name TEXT,
         email TEXT UNIQUE,
         password TEXT,
-        role TEXT
+        role TEXT,
+        blacklisted INTEGER DEFAULT 0
     )
     """)
 
@@ -93,3 +94,20 @@ CREATE TABLE IF NOT EXISTS stations (
 
     conn.commit()
     conn.close()
+
+    # Ensure 'blacklisted' column exists for older DBs
+    try:
+        conn = get_db()
+        cur = conn.cursor()
+        cur.execute("PRAGMA table_info(users)")
+        cols = [c[1] for c in cur.fetchall()]
+        if 'blacklisted' not in cols:
+            cur.execute("ALTER TABLE users ADD COLUMN blacklisted INTEGER DEFAULT 0")
+            conn.commit()
+    except Exception:
+        pass
+    finally:
+        try:
+            conn.close()
+        except Exception:
+            pass

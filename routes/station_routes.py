@@ -25,7 +25,7 @@ def add_station():
         cur = conn.cursor()
         cur.execute("""
             INSERT INTO stations (name, location, chargers, price, green_score, owner_id, approved)
-            VALUES (?, ?, ?, ?, ?, ?, 1)
+            VALUES (?, ?, ?, ?, ?, ?, 0)
         """, (name, location, chargers, price, green_score, owner_id))
         conn.commit()
         conn.close()
@@ -117,6 +117,13 @@ def charge_station(station_name):
 
     conn = get_db()
     cur = conn.cursor()
+
+    # Prevent blacklisted users from starting charging
+    cur.execute("SELECT blacklisted FROM users WHERE id=?", (session.get('user_id'),))
+    b = cur.fetchone()
+    if b and b[0]:
+        conn.close()
+        return "Account is blacklisted"
 
     # Get total chargers
     cur.execute(
