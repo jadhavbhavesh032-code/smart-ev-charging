@@ -45,7 +45,36 @@ def user_dashboard():
 def owner_dashboard():
     if session.get("role") != "owner":
         return redirect("/login")
-    return render_template("owner_dashboard.html")
+
+    # Compute owner stats: total stations, users served, revenue
+    conn = get_db()
+    cur = conn.cursor()
+
+    # Total stations owned
+    cur.execute("SELECT COUNT(*) FROM stations WHERE owner_id=?", (session.get('user_id'),))
+    total_stations = cur.fetchone()[0]
+
+    # Users served (distinct users with sessions at this owner's stations)
+    cur.execute("""
+        SELECT COUNT(DISTINCT cs.user_id)
+        FROM charging_sessions cs
+        JOIN stations s ON cs.station_name = s.name
+        WHERE s.owner_id = ?
+    """, (session.get('user_id'),))
+    users_served = cur.fetchone()[0]
+
+    # Revenue generated (sum of amounts for sessions at owner's stations)
+    cur.execute("""
+        SELECT COALESCE(SUM(cs.amount), 0)
+        FROM charging_sessions cs
+        JOIN stations s ON cs.station_name = s.name
+        WHERE s.owner_id = ?
+    """, (session.get('user_id'),))
+    total_revenue = cur.fetchone()[0]
+
+    conn.close()
+
+    return render_template("owner_dashboard.html", total_stations=total_stations, total_users=users_served, total_revenue=total_revenue)
 
 
 if __name__ == "__main__":

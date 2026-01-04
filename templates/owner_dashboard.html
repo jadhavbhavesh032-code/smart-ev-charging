@@ -36,21 +36,21 @@
     <div class="col-md-4">
         <div class="stat-box">
             <i class="fas fa-plug"></i>
-            <h3 id="total-stations">0</h3>
+            <h3 id="total-stations">{{ total_stations if total_stations is defined else 0 }}</h3>
             <p>Total Stations</p>
         </div>
     </div>
     <div class="col-md-4">
         <div class="stat-box">
             <i class="fas fa-users"></i>
-            <h3 id="total-users">0</h3>
+            <h3 id="total-users">{{ total_users if total_users is defined else 0 }}</h3>
             <p>Users Served</p>
         </div>
     </div>
     <div class="col-md-4">
         <div class="stat-box">
             <i class="fas fa-indian-rupee-sign"></i>
-            <h3 id="total-revenue">0</h3>
+            <h3 id="total-revenue">₹{{ total_revenue if total_revenue is defined else 0 }}</h3>
             <p>Revenue</p>
         </div>
     </div>
