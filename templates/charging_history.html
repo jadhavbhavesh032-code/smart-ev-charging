@@ -32,7 +32,8 @@
             {% set total_units = 0 %}
             {% set total_amount = 0 %}
             {% for h in history %}
-            {% if h[5] == 'Active' %}
+            {# Sum units and amount for Active and Completed sessions (exclude Cancelled) #}
+            {% if h[5] != 'Cancelled' and h[2] is not none and h[3] is not none %}
                 {% set total_units = total_units + h[2] %}
                 {% set total_amount = total_amount + h[3] %}
             {% endif %}
@@ -57,7 +58,7 @@
                 </td>
                 <td>
                     {% if h[5] == "Active" %}
-                        <button class="btn btn-sm btn-danger" onclick="stopCharging({{ h[0] }})">
+                        <button class="btn btn-sm btn-danger stop-btn" data-session-id="{{ h[0] }}">
                             <i class="fas fa-stop-circle"></i> Stop
                         </button>
                     {% else %}
@@ -132,5 +133,34 @@
         }
     }
 </script>
+    <script>
+        // Attach handlers to buttons generated without inline onclick
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.stop-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const sessionId = this.dataset.sessionId;
+                    if (confirm('Are you sure you want to stop this charging session?')) {
+                        fetch(`/user/stop-charging/${sessionId}`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' }
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.status === 'success') {
+                                alert('Charging stopped successfully!');
+                                location.reload();
+                            } else {
+                                alert('Error: ' + (data.error || data.message || 'Unknown'));
+                            }
+                        })
+                        .catch(err => {
+                            console.error(err);
+                            alert('Error stopping charging');
+                        });
+                    }
+                });
+            });
+        });
+    </script>
 {% endblock %}
 
