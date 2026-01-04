@@ -7,10 +7,10 @@ auth_bp = Blueprint("auth", __name__)
 @auth_bp.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "POST":
-        name = request.form["name"]
-        email = request.form["email"]
-        password = request.form["password"]
-        role = request.form["role"]  # user / owner
+        name = request.form["name"].strip()
+        email = request.form["email"].strip().lower()
+        password = request.form["password"].strip()
+        role = request.form["role"].strip()  # user / owner
 
         conn = get_db()
         cur = conn.cursor()
@@ -34,13 +34,13 @@ def register():
 @auth_bp.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
-        email = request.form["email"]
-        password = request.form["password"]
+        email = request.form["email"].strip().lower()
+        password = request.form["password"].strip()
 
         conn = get_db()
         cur = conn.cursor()
         cur.execute(
-            "SELECT id, role FROM users WHERE email=? AND password=?",
+            "SELECT id, role FROM users WHERE lower(email)=? AND password=?",
             (email, password)
         )
         user = cur.fetchone()

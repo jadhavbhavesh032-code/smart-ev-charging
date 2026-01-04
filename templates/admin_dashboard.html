@@ -1,49 +1,120 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Admin Dashboard</title>
-</head>
-<body>
+{% extends "base.html" %}
 
-<h1>Admin Dashboard</h1>
+{% block title %}Admin Dashboard - Smart EV Charging{% endblock %}
 
-<h3>Platform Overview</h3>
-<ul>
-    <li><b>Total Users:</b> {{ total_users }}</li>
-    <li><b>Total Charging Stations:</b> {{ total_stations }}</li>
-    <li><b>Total Charging Sessions:</b> {{ total_sessions }}</li>
-    <li><b>Total Revenue Generated:</b> ₹{{ total_revenue }}</li>
-</ul>
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1><i class="fas fa-cogs"></i> Admin Dashboard</h1>
+    <a href="/admin/logout" class="btn btn-outline-danger">
+        <i class="fas fa-sign-out-alt"></i> Logout
+    </a>
+</div>
 
-<h3>Charging Sessions</h3>
+<h3 class="mb-4"><i class="fas fa-chart-line"></i> Platform Overview</h3>
 
-<table border="1">
-<tr>
-    <th>Station</th>
-    <th>Units</th>
-    <th>Amount</th>
-    <th>Transaction Hash</th>
-    <th>Status</th>
-</tr>
+<div class="row g-4 mb-large">
+    <div class="col-md-3 col-sm-6">
+        <div class="stat-box">
+            <i class="fas fa-users" style="font-size: 2rem; color: #3498db;"></i>
+            <h3>{{ total_users }}</h3>
+            <p>Total Users</p>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6">
+        <div class="stat-box">
+            <i class="fas fa-charging-station" style="font-size: 2rem; color: #2ecc71;"></i>
+            <h3>{{ total_stations }}</h3>
+            <p>Charging Stations</p>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6">
+        <div class="stat-box">
+            <i class="fas fa-plug" style="font-size: 2rem; color: #f39c12;"></i>
+            <h3>{{ total_sessions }}</h3>
+            <p>Charging Sessions</p>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6">
+        <div class="stat-box">
+            <i class="fas fa-indian-rupee-sign" style="font-size: 2rem; color: #e74c3c;"></i>
+            <h3>₹{{ total_revenue }}</h3>
+            <p>Total Revenue</p>
+        </div>
+    </div>
+</div>
 
-{% for s in sessions %}
-<tr>
-    <td>{{ s[0] }}</td>
-    <td>{{ s[1] }}</td>
-    <td>{{ s[2] }}</td>
-    <td>{{ s[3] }}</td>
-    <td>{{ s[4] }}</td>
-</tr>
-{% endfor %}
-</table>
+<div class="row mb-large">
+    <div class="col-md-6 mb-4">
+        <a href="/admin/stations" class="text-decoration-none">
+            <div class="card h-100" style="cursor: pointer;">
+                <div class="card-header">
+                    <i class="fas fa-check-circle"></i> Approve Stations
+                </div>
+                <div class="card-body">
+                    <p>Review and approve new charging station submissions from owners.</p>
+                    <button class="btn btn-primary">
+                        <i class="fas fa-arrow-right"></i> Manage Stations
+                    </button>
+                </div>
+            </div>
+        </a>
+    </div>
 
-<br>
-<a href="/admin/logout">Logout</a>
+    <div class="col-md-6 mb-4">
+        <a href="/admin/queue" class="text-decoration-none">
+            <div class="card h-100" style="cursor: pointer;">
+                <div class="card-header">
+                    <i class="fas fa-list"></i> Waiting Queue
+                </div>
+                <div class="card-body">
+                    <p>Monitor users waiting for charging availability at stations.</p>
+                    <button class="btn btn-primary">
+                        <i class="fas fa-arrow-right"></i> View Queue
+                    </button>
+                </div>
+            </div>
+        </a>
+    </div>
+</div>
 
-<a href="/">🏠 Home</a> |
-<a href="/admin/logout">Logout</a>
-<hr>
+<h3 class="mb-4"><i class="fas fa-history"></i> Recent Charging Sessions</h3>
 
-
-</body>
-</html>
+{% if sessions %}
+<div class="table-responsive">
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th><i class="fas fa-charging-station"></i> Station</th>
+                <th><i class="fas fa-battery-full"></i> Units (kWh)</th>
+                <th><i class="fas fa-money-bill-wave"></i> Amount (₹)</th>
+                <th><i class="fas fa-link"></i> Transaction Hash</th>
+                <th><i class="fas fa-check-circle"></i> Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for s in sessions %}
+            <tr>
+                <td><strong>{{ s[0] }}</strong></td>
+                <td>{{ s[1] }}</td>
+                <td>₹{{ s[2] }}</td>
+                <td><code style="font-size: 0.8rem;">{{ s[3][:16] }}...</code></td>
+                <td>
+                    {% if s[4] == "completed" %}
+                        <span class="badge badge-success">Completed</span>
+                    {% elif s[4] == "pending" %}
+                        <span class="badge badge-warning">Pending</span>
+                    {% else %}
+                        <span class="badge" style="background-color: #95a5a6;">{{ s[4] }}</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div class="alert alert-info">
+    <i class="fas fa-info-circle"></i> No charging sessions yet.
+</div>
+{% endif %}
+{% endblock %}

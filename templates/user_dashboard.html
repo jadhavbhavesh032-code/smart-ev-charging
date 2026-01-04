@@ -1,10 +1,73 @@
-<h1>EV User Dashboard</h1>
+{% extends "base.html" %}
 
-<ul>
-    <li><a href="/user/stations">View Charging Stations</a></li>
-    <li><a href="/user/recommend">AI Charging Recommendation</a></li>
-    <li><a href="/user/history">Charging History</a></li>
-</ul>
+{% block title %}User Dashboard - Smart EV Charging{% endblock %}
 
-<br>
-<a href="/logout">Logout</a>
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1><i class="fas fa-tachometer-alt"></i> EV User Dashboard</h1>
+</div>
+
+<div class="alert alert-info alert-dismissible fade show">
+    <i class="fas fa-lightbulb"></i> <strong>Welcome!</strong> Find charging stations, track your sessions, and get AI-powered recommendations.
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+</div>
+
+<div class="dashboard-menu">
+    <a href="/user/stations" class="menu-item">
+        <i class="fas fa-map-pin"></i>
+        <h5>Find Stations</h5>
+        <p>Locate nearby charging stations with real-time availability</p>
+    </a>
+
+    <a href="/user/recommend" class="menu-item">
+        <i class="fas fa-brain"></i>
+        <h5>AI Recommendations</h5>
+        <p>Get intelligent charging suggestions based on your patterns</p>
+    </a>
+
+    <a href="/user/history" class="menu-item">
+        <i class="fas fa-history"></i>
+        <h5>Charging History</h5>
+        <p>View your past charging sessions and analytics</p>
+    </a>
+</div>
+
+<div class="row mt-large">
+    <div class="col-md-4">
+        <div class="stat-box">
+            <i class="fas fa-plug"></i>
+            <h3 id="sessions-count">0</h3>
+            <p>Total Sessions</p>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stat-box">
+            <i class="fas fa-battery-full"></i>
+            <h3 id="units-count">0</h3>
+            <p>Units Charged (kWh)</p>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stat-box">
+            <i class="fas fa-leaf"></i>
+            <h3 id="green-score">0</h3>
+            <p>Green Score</p>
+        </div>
+    </div>
+</div>
+
+<div class="mt-large">
+    <div class="card">
+        <div class="card-header">
+            <i class="fas fa-question-circle"></i> Quick Tips
+        </div>
+        <div class="card-body">
+            <ul class="list-unstyled">
+                <li class="mb-2"><span class="badge badge-success"><i class="fas fa-check"></i></span> Use our AI recommendations to find the best charging times and prices</li>
+                <li class="mb-2"><span class="badge badge-success"><i class="fas fa-check"></i></span> Check the green score to choose eco-friendly stations</li>
+                <li class="mb-2"><span class="badge badge-success"><i class="fas fa-check"></i></span> Track your charging history for better planning</li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}
