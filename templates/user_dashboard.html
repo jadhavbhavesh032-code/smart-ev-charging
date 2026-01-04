@@ -36,22 +36,22 @@
     <div class="col-md-4">
         <div class="stat-box">
             <i class="fas fa-plug"></i>
-            <h3 id="sessions-count">0</h3>
+            <h3 id="sessions-count">{{ total_sessions if total_sessions is defined else 0 }}</h3>
             <p>Total Sessions</p>
         </div>
     </div>
     <div class="col-md-4">
         <div class="stat-box">
             <i class="fas fa-battery-full"></i>
-            <h3 id="units-count">0</h3>
+            <h3 id="units-count">{{ "%.1f"|format(total_units) if total_units is defined else 0 }}</h3>
             <p>Units Charged (kWh)</p>
         </div>
     </div>
     <div class="col-md-4">
         <div class="stat-box">
             <i class="fas fa-leaf"></i>
-            <h3 id="green-score">0</h3>
-            <p>Green Score</p>
+            <h3 id="green-score">{{ "%.1f"|format(avg_green_score) if avg_green_score is defined else 0 }}/10</h3>
+            <p>Avg Green Score</p>
         </div>
     </div>
 </div>

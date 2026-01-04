@@ -38,7 +38,31 @@ def home():
 def user_dashboard():
     if session.get("role") != "user":
         return redirect("/login")
-    return render_template("user_dashboard.html")
+
+    # Compute user stats: total sessions, units charged, average green score
+    conn = get_db()
+    cur = conn.cursor()
+
+    # Total sessions
+    cur.execute("SELECT COUNT(*) FROM charging_sessions WHERE user_id=?", (session.get('user_id'),))
+    total_sessions = cur.fetchone()[0]
+
+    # Total units charged (sum of units from completed sessions)
+    cur.execute("SELECT COALESCE(SUM(units), 0) FROM charging_sessions WHERE user_id=? AND status='Completed'", (session.get('user_id'),))
+    total_units = cur.fetchone()[0]
+
+    # Average green score of stations the user has charged at
+    cur.execute("""
+        SELECT COALESCE(AVG(s.green_score), 0)
+        FROM charging_sessions cs
+        JOIN stations s ON cs.station_name = s.name
+        WHERE cs.user_id = ?
+    """, (session.get('user_id'),))
+    avg_green_score = cur.fetchone()[0]
+
+    conn.close()
+
+    return render_template("user_dashboard.html", total_sessions=total_sessions, total_units=total_units, avg_green_score=avg_green_score)
 
 
 @app.route("/owner/dashboard")
