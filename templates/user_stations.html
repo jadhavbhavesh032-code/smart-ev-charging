@@ -34,7 +34,7 @@
                 <td><strong>{{ s[1] }}</strong></td>
                 <td>{{ s[2] }}</td>
                 <td>
-                    <span class="badge" style="background-color: {% if s[3] > 0 %}#2ecc71{% else %}#e74c3c{% endif %};">
+                    <span class="badge {% if s[3] > 0 %}badge-approved{% else %}badge-rejected{% endif %}">
                         {{ s[3] }} chargers
                     </span>
                 </td>
