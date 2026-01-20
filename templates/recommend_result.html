@@ -51,14 +51,11 @@
 
                 <hr>
 
-                <div class="alert alert-success mt-4">
-                    <i class="fas fa-check-circle"></i> <strong>Why this station?</strong>
-                    <ul class="list-unstyled mt-2">
-                        <li><i class="fas fa-check"></i> Optimal distance for your travel needs</li>
-                        <li><i class="fas fa-check"></i> Best price among nearby stations</li>
-                        <li><i class="fas fa-check"></i> Excellent environmental rating</li>
-                        <li><i class="fas fa-check"></i> Multiple chargers available</li>
-                    </ul>
+                <div class="alert alert-info mt-4">
+                    <i class="fas fa-brain"></i> <strong>AI Analysis</strong>
+                    <div class="mt-2" style="white-space: pre-wrap; line-height: 1.6;">
+                        {{ explanation }}
+                    </div>
                 </div>
 
                 <a href="/user/charge/{{ station[0] }}?price={{ station[3] }}" class="btn btn-primary w-100 py-3">

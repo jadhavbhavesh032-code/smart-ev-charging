@@ -100,9 +100,9 @@ def recommend():
         stations = cur.fetchall()
         conn.close()
 
-        best_station = recommend_station(battery, distance, stations)
+        best_station, explanation = recommend_station(battery, distance, stations)
 
-        return render_template("recommend_result.html", station=best_station)
+        return render_template("recommend_result.html", station=best_station, explanation=explanation)
 
     return render_template("recommend_form.html")
 
@@ -635,3 +635,197 @@ def owner_cancel_charging(session_id):
     conn.close()
 
     return {"status": "success", "message": "Charging cancelled"}, 200
+
+
+# ===============================
+# AI CHATBOT
+# ===============================
+@station_bp.route("/user/chat", methods=["GET", "POST"])
+def chat():
+    if session.get("role") != "user":
+        return redirect("/login")
+    
+    from ai.chatbot import chat_with_bot
+    
+    if request.method == "POST":
+        user_message = request.form.get("message", "").strip()
+        
+        if not user_message:
+            return render_template("chat_interface.html", error="Please enter a message")
+        
+        response, is_error = chat_with_bot(user_message)
+        
+        return render_template("chat_interface.html", 
+                             user_message=user_message,
+                             bot_response=response,
+                             is_error=is_error)
+    
+    return render_template("chat_interface.html")
+
+
+# ===============================
+# USER INSIGHTS & ANALYTICS
+# ===============================
+@station_bp.route("/user/insights", methods=["GET"])
+def user_insights():
+    if session.get("role") != "user":
+        return redirect("/login")
+    
+    from ai.insights import get_user_insights_dashboard
+    
+    user_id = session.get('user_id')
+    insights = get_user_insights_dashboard(user_id)
+    
+    return render_template("user_insights.html", insights=insights)
+
+
+# ===============================
+# NATURAL LANGUAGE SEARCH
+# ===============================
+@station_bp.route("/user/nl-search", methods=["GET", "POST"])
+def nl_search():
+    if session.get("role") != "user":
+        return redirect("/login")
+    
+    from ai.nl_query import search_with_natural_language
+    
+    results = None
+    explanation = None
+    query = None
+    
+    if request.method == "POST":
+        query = request.form.get("query", "").strip()
+        
+        if not query:
+            return render_template("nl_search.html", error="Please enter a search query")
+        
+        # Get all stations
+        conn = get_db()
+        cur = conn.cursor()
+        cur.execute("""
+            SELECT name, location, chargers, price, green_score
+            FROM stations WHERE approved = 1
+        """)
+        all_stations = cur.fetchall()
+        conn.close()
+        
+        # Perform search
+        search_result = search_with_natural_language(query, all_stations)
+        results = search_result["results"]
+        explanation = search_result["explanation"]
+    
+    return render_template("nl_search.html", 
+                         results=results,
+                         explanation=explanation,
+                         query=query)
+
+
+# ===============================
+# STATION ANALYTICS
+# ===============================
+@station_bp.route("/user/station-analytics/<station_name>", methods=["GET"])
+def station_analytics(station_name):
+    if session.get("role") != "user":
+        return redirect("/login")
+    
+    from ai.analytics import get_all_analytics_summary
+    
+    analytics = get_all_analytics_summary(station_name)
+    
+    return render_template("station_analytics.html", 
+                         station_name=station_name,
+                         analytics=analytics)
+
+
+# ===============================
+# GOOGLE MAPS INTEGRATION
+# ===============================
+@station_bp.route("/user/map-search", methods=["GET", "POST"])
+def map_search():
+    if session.get("role") != "user":
+        return redirect("/login")
+    
+    from ai.map_utils import get_all_stations_with_location, search_stations_by_location, get_map_config
+    
+    stations = []
+    search_performed = False
+    search_type = None
+    
+    if request.method == "POST":
+        search_type = request.form.get("search_type", "all")
+        search_performed = True
+        
+        if search_type == "all":
+            # Get all stations
+            stations = get_all_stations_with_location()
+        
+        elif search_type == "nearby":
+            # Search by user location
+            lat = float(request.form.get("latitude", 28.6139))
+            lng = float(request.form.get("longitude", 77.2090))
+            radius = float(request.form.get("radius", 10))
+            
+            stations = search_stations_by_location(lat, lng, radius)
+        
+        elif search_type == "filter":
+            # Filter by criteria
+            all_stations = get_all_stations_with_location()
+            green_min = int(request.form.get("green_min", 0))
+            price_max = float(request.form.get("price_max", 1000))
+            chargers_min = int(request.form.get("chargers_min", 0))
+            
+            stations = [
+                s for s in all_stations
+                if s["green_score"] >= green_min
+                and s["price"] <= price_max
+                and s["chargers"] >= chargers_min
+            ]
+    else:
+        # Default: show all stations
+        stations = get_all_stations_with_location()
+    
+    map_config = get_map_config()
+    
+    return render_template("map_search.html",
+                         stations=stations,
+                         map_config=map_config,
+                         search_performed=search_performed,
+                         search_type=search_type)
+
+
+@station_bp.route("/user/map-booking/<int:station_id>", methods=["GET", "POST"])
+def map_booking(station_id):
+    if session.get("role") != "user":
+        return redirect("/login")
+    
+    conn = get_db()
+    cur = conn.cursor()
+    
+    # Get station details
+    cur.execute("""
+        SELECT name, location, chargers, price, green_score
+        FROM stations
+        WHERE id = ? AND approved = 1
+    """, (station_id,))
+    
+    station = cur.fetchone()
+    conn.close()
+    
+    if not station:
+        return "Station not found", 404
+    
+    if request.method == "POST":
+        units = float(request.form.get("units", 10))
+        
+        # Redirect to charging page
+        return redirect(f"/user/charge/{station[0]}?price={station[3]}&units={units}")
+    
+    return render_template("map_booking.html",
+                         station_id=station_id,
+                         station={
+                             "name": station[0],
+                             "location": station[1],
+                             "chargers": station[2],
+                             "price": station[3],
+                             "green_score": station[4]
+                         })
