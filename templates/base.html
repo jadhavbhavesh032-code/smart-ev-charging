@@ -352,7 +352,7 @@
     {% block extra_css %}{% endblock %}
 </head>
 <body>
-    {% if session.get('role') %}
+    {% if session.get('admin_logged_in') or session.get('role') %}
     <nav class="navbar navbar-expand-lg navbar-dark mb-4">
         <div class="container-fluid">
             <a class="navbar-brand" href="/">
@@ -364,9 +364,19 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ '/user/dashboard' if session.get('role') == 'user' else '/owner/dashboard' if session.get('role') == 'owner' else '/admin/dashboard' }}">
-                            <i class="fas fa-home"></i> Dashboard
-                        </a>
+                        {% if session.get('admin_logged_in') %}
+                            <a class="nav-link" href="/admin/dashboard">
+                                <i class="fas fa-home"></i> Dashboard
+                            </a>
+                        {% elif session.get('role') == 'user' %}
+                            <a class="nav-link" href="/user/dashboard">
+                                <i class="fas fa-home"></i> Dashboard
+                            </a>
+                        {% elif session.get('role') == 'owner' %}
+                            <a class="nav-link" href="/owner/dashboard">
+                                <i class="fas fa-home"></i> Dashboard
+                            </a>
+                        {% endif %}
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/logout">

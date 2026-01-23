@@ -1,17 +1,20 @@
-import google.generativeai as genai
+import google.genai as genai
 import os
 import json
 import logging
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 logger = logging.getLogger(__name__)
 
 # Configure Gemini API
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
 if GEMINI_API_KEY:
-    try:
-        genai.configure(api_key=GEMINI_API_KEY)
-    except Exception as e:
-        logger.warning(f"Failed to configure Gemini API: {e}")
+    logger.info("✅ Gemini API key configured for Recommender")
+else:
+    logger.warning("⚠️ GEMINI_API_KEY not set for Recommender")
 
 
 def recommend_station(battery, distance, stations):
@@ -94,8 +97,12 @@ Please provide:
 
 Keep the response concise and practical. Format as JSON with keys: "why", "benefits", "tip"."""
         
-        model = genai.GenerativeModel('gemini-pro')
-        response = model.generate_content(prompt, generation_config=genai.types.GenerationConfig(temperature=0.7))
+        client = genai.Client()
+        response = client.models.generate_content(
+            model="models/gemini-2.0-flash",
+            contents=prompt,
+            config={"temperature": 0.7}
+        )
         
         if response and response.text:
             # Try to parse JSON response

@@ -1,16 +1,19 @@
-import google.generativeai as genai
+import google.genai as genai
 import os
 import json
 import logging
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 logger = logging.getLogger(__name__)
 
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
 if GEMINI_API_KEY:
-    try:
-        genai.configure(api_key=GEMINI_API_KEY)
-    except Exception as e:
-        logger.warning(f"Failed to configure Gemini API: {e}")
+    logger.info("✅ Gemini API key configured for NL Query")
+else:
+    logger.warning("⚠️ GEMINI_API_KEY not set for NL Query")
 
 
 def parse_natural_language_query(query):
@@ -61,8 +64,12 @@ Rules:
 - If price mentioned: extract price_max
 - Only return valid JSON, no extra text"""
         
-        model = genai.GenerativeModel('gemini-pro')
-        response = model.generate_content(prompt, generation_config=genai.types.GenerationConfig(temperature=0.3))
+        client = genai.Client()
+        response = client.models.generate_content(
+            model="models/gemini-2.0-flash",
+            contents=prompt,
+            config={"temperature": 0.3}
+        )
         
         if response and response.text:
             try:

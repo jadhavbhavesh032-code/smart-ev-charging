@@ -16,28 +16,28 @@
     <div class="col-md-3 col-sm-6">
         <div class="stat-box">
             <i class="fas fa-users" style="font-size: 2rem; color: #3498db;"></i>
-            <h3>{{ total_users }}</h3>
+            <h3>{{ total_users|default(0) }}</h3>
             <p>Total Users</p>
         </div>
     </div>
     <div class="col-md-3 col-sm-6">
         <div class="stat-box">
             <i class="fas fa-charging-station" style="font-size: 2rem; color: #2ecc71;"></i>
-            <h3>{{ total_stations }}</h3>
+            <h3>{{ total_stations|default(0) }}</h3>
             <p>Charging Stations</p>
         </div>
     </div>
     <div class="col-md-3 col-sm-6">
         <div class="stat-box">
             <i class="fas fa-plug" style="font-size: 2rem; color: #f39c12;"></i>
-            <h3>{{ total_sessions }}</h3>
+            <h3>{{ total_sessions|default(0) }}</h3>
             <p>Charging Sessions</p>
         </div>
     </div>
     <div class="col-md-3 col-sm-6">
         <div class="stat-box">
             <i class="fas fa-indian-rupee-sign" style="font-size: 2rem; color: #e74c3c;"></i>
-            <h3>₹{{ total_revenue }}</h3>
+            <h3>₹{{ total_revenue|default(0) }}</h3>
             <p>Total Revenue</p>
         </div>
     </div>
@@ -94,17 +94,17 @@
         <tbody>
             {% for s in sessions %}
             <tr>
-                <td><strong>{{ s[0] }}</strong></td>
-                <td>{{ s[1] }}</td>
-                <td>₹{{ s[2] }}</td>
-                <td><code style="font-size: 0.8rem;">{{ s[3][:16] }}...</code></td>
+                <td><strong>{{ s[0]|default('N/A') }}</strong></td>
+                <td>{{ s[1]|default('N/A') }}</td>
+                <td>₹{{ s[2]|default('N/A') }}</td>
+                <td><code style="font-size: 0.8rem;">{{ (s[3]|default('N/A')|string)[:16] }}...</code></td>
                 <td>
-                    {% if s[4] == "completed" %}
+                    {% if s[4]|default('pending') == "completed" %}
                         <span class="badge badge-success">Completed</span>
-                    {% elif s[4] == "pending" %}
+                    {% elif s[4]|default('pending') == "pending" %}
                         <span class="badge badge-warning">Pending</span>
                     {% else %}
-                        <span class="badge" style="background-color: #95a5a6;">{{ s[4] }}</span>
+                        <span class="badge" style="background-color: #95a5a6;">{{ s[4]|default('N/A') }}</span>
                     {% endif %}
                 </td>
             </tr>

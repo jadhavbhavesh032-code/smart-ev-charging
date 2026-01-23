@@ -34,33 +34,49 @@ def admin_dashboard():
     if not session.get("admin_logged_in"):
         return redirect("/admin/login")
 
-    conn = get_db()
-    cur = conn.cursor()
+    # Initialize all variables
+    total_users = 0
+    total_stations = 0
+    total_sessions = 0
+    total_revenue = 0
+    sessions = []
 
-    cur.execute("SELECT COUNT(*) FROM users")
-    total_users = cur.fetchone()[0]
+    try:
+        conn = get_db()
+        cur = conn.cursor()
 
-    cur.execute("SELECT COUNT(*) FROM stations")
-    total_stations = cur.fetchone()[0]
+        cur.execute("SELECT COUNT(*) FROM users")
+        result = cur.fetchone()
+        total_users = result[0] if result else 0
 
-    cur.execute("SELECT COUNT(*) FROM charging_sessions")
-    total_sessions = cur.fetchone()[0]
+        cur.execute("SELECT COUNT(*) FROM stations")
+        result = cur.fetchone()
+        total_stations = result[0] if result else 0
 
-    cur.execute("SELECT IFNULL(SUM(amount), 0) FROM charging_sessions")
-    total_revenue = cur.fetchone()[0]
+        cur.execute("SELECT COUNT(*) FROM charging_sessions")
+        result = cur.fetchone()
+        total_sessions = result[0] if result else 0
 
-    print("TOTAL USERS:", total_users)
-    print("TOTAL STATIONS:", total_stations)
-    print("TOTAL SESSIONS:", total_sessions)
-    print("TOTAL REVENUE:", total_revenue)
+        cur.execute("SELECT IFNULL(SUM(amount), 0) FROM charging_sessions")
+        result = cur.fetchone()
+        total_revenue = result[0] if result else 0
 
-    cur.execute("""
-        SELECT station_name, units, amount, tx_hash, status
-        FROM charging_sessions
-    """)
-    sessions = cur.fetchall()
+        print("TOTAL USERS:", total_users)
+        print("TOTAL STATIONS:", total_stations)
+        print("TOTAL SESSIONS:", total_sessions)
+        print("TOTAL REVENUE:", total_revenue)
 
-    conn.close()
+        cur.execute("""
+            SELECT station_name, units, amount, tx_hash, status
+            FROM charging_sessions
+        """)
+        sessions = cur.fetchall() or []
+        conn.close()
+
+    except Exception as e:
+        print(f"Error loading admin dashboard: {e}")
+        import traceback
+        traceback.print_exc()
 
     return render_template(
         "admin_dashboard.html",
@@ -84,15 +100,19 @@ def admin_stations():
     if not session.get("admin_logged_in"):
         return redirect("/admin/login")
 
-    conn = get_db()
-    cur = conn.cursor()
+    try:
+        conn = get_db()
+        cur = conn.cursor()
 
-    cur.execute("""
-        SELECT id, name, location, chargers, price, green_score, approved
-        FROM stations
-    """)
-    stations = cur.fetchall()
-    conn.close()
+        cur.execute("""
+            SELECT id, name, location, chargers, price, green_score, approved
+            FROM stations
+        """)
+        stations = cur.fetchall() or []
+        conn.close()
+    except Exception as e:
+        print(f"Error loading stations: {e}")
+        stations = []
 
     return render_template("admin_stations.html", stations=stations)
 
@@ -102,11 +122,15 @@ def admin_users():
     if not session.get("admin_logged_in"):
         return redirect("/admin/login")
 
-    conn = get_db()
-    cur = conn.cursor()
-    cur.execute("SELECT id, name, email, role, blacklisted FROM users ORDER BY id DESC")
-    users = cur.fetchall()
-    conn.close()
+    try:
+        conn = get_db()
+        cur = conn.cursor()
+        cur.execute("SELECT id, name, email, role, blacklisted FROM users ORDER BY id DESC")
+        users = cur.fetchall() or []
+        conn.close()
+    except Exception as e:
+        print(f"Error loading users: {e}")
+        users = []
 
     return render_template('admin_users.html', users=users)
 

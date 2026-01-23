@@ -1,8 +1,12 @@
 from flask import Flask, redirect, render_template, session
+from dotenv import load_dotenv
 from models.db import init_db, get_db
 from routes.admin_routes import admin_bp
 from routes.auth_routes import auth_bp 
 from routes.station_routes import station_bp
+
+# Load environment variables from .env file
+load_dotenv()
 
 app = Flask(__name__)
 app.secret_key = "secret123"  # required for session

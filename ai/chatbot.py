@@ -1,15 +1,18 @@
-import google.generativeai as genai
+import google.genai as genai
 import os
 import logging
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 logger = logging.getLogger(__name__)
 
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
 if GEMINI_API_KEY:
-    try:
-        genai.configure(api_key=GEMINI_API_KEY)
-    except Exception as e:
-        logger.warning(f"Failed to configure Gemini API: {e}")
+    logger.info("✅ Gemini API key configured")
+else:
+    logger.warning("⚠️ GEMINI_API_KEY not set. Chatbot will use fallback responses.")
 
 
 def chat_with_bot(user_message, conversation_history=None):
@@ -26,6 +29,7 @@ def chat_with_bot(user_message, conversation_history=None):
     """
     
     if not GEMINI_API_KEY:
+        logger.info("ℹ️ No Gemini API key - using fallback response")
         return _get_fallback_response(user_message), False
     
     try:
@@ -40,12 +44,12 @@ def chat_with_bot(user_message, conversation_history=None):
 
 Be concise, helpful, and professional. Provide actionable advice. If you don't know something specific, suggest the user contact support or check the app.
 
-Today's date: January 20, 2026."""
+Today's date: January 23, 2026."""
 
         # Build message history
         messages = []
         
-        # Add system context
+        # Add conversation context
         if conversation_history:
             for role, content in conversation_history[-10:]:  # Last 10 messages for context
                 messages.append({
@@ -53,22 +57,30 @@ Today's date: January 20, 2026."""
                     "parts": [{"text": content}]
                 })
         
-        # Add current user message
+        # Add current user message with system context
         messages.append({
             "role": "user",
-            "parts": [{"text": f"{system_prompt}\n\nUser: {user_message}"}]
+            "parts": [{"text": f"{system_prompt}\n\nUser Message: {user_message}"}]
         })
         
-        model = genai.GenerativeModel('gemini-pro')
-        response = model.generate_content(messages, generation_config=genai.types.GenerationConfig(temperature=0.7))
+        logger.debug(f"🔄 Sending message to Gemini API: {user_message[:50]}...")
+        
+        model = genai.Client().models.get("models/gemini-2.0-flash")
+        response = model.generate_content(
+            messages,
+            generation_config={"temperature": 0.7, "max_output_tokens": 500}
+        )
         
         if response and response.text:
+            logger.info("✅ Gemini API response received successfully")
             return response.text, False
-        
-        return _get_fallback_response(user_message), False
+        else:
+            logger.warning("⚠️ Gemini API returned empty response")
+            return _get_fallback_response(user_message), False
         
     except Exception as e:
-        logger.error(f"Chatbot error: {e}")
+        logger.error(f"❌ Chatbot API error: {str(e)}")
+        logger.info("📌 Falling back to keyword-based response")
         return _get_fallback_response(user_message), False
 
 
