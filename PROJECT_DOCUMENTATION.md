@@ -1,11 +1,3 @@
-<<<<<<< HEAD
-## 🚀 Demo Video
-
-[![Watch the Demo](assets/demo.png)](https://drive.google.com/file/d/1sxRucvn68sS_PPAdoi_TwBxTrCbmyPyT/view?usp=drive_link)
-
-📽️ Click the image to watch the demo video.
-https://smart-ev-charging.onrender.com
-=======
 # Smart EV Charging Platform - Project Documentation
 
 ## Team Details
@@ -418,4 +410,3 @@ For questions or support, please reach out to the team:
 
 **Last Updated:** January 24, 2026
 **Version:** 1.0 - Release Candidate
->>>>>>> 59520ef (Update README with full documentation and remove old files)
