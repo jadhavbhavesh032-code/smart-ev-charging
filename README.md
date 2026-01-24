@@ -1,10 +1,10 @@
 # Smart EV Charging Platform - Project Documentation
 
 ## Team Details
-- **Team Name:** Smart EV Charging Team
+- **Team Name:** CodeCrafters
 - **Team Members:**
-  - Sachin Jha
   - Prince Jha
+  - Sachin Jha
   - Bhavesh Jadhav
 
 ---
@@ -61,7 +61,7 @@ The electric vehicle adoption is rapidly increasing, but users face significant 
 
 ---
 
-## How to Execute Your Code
+## How to Execute the Code
 
 ### Prerequisites
 - Python 3.8 or higher installed
@@ -163,93 +163,61 @@ http://localhost:5000
 **Demo User Accounts:** (After running seed_demo_data.py)
 - Create new accounts via registration at http://localhost:5000/register
 
+## Troubleshooting(If required)
+
+### Common Issues & Solutions
+
+**Issue:** "ModuleNotFoundError: No module named 'flask'"
+```bash
+# Solution: Install dependencies
+pip install -r requirements.txt
+```
+
+**Issue:** "Google Maps API key not valid"
+- Verify API key in `.env` file
+- Ensure Maps JavaScript API is enabled in Google Cloud Console
+- Check API key restrictions
+
+**Issue:** "GEMINI_API_KEY environment variable not found"
+- Create `.env` file with your API key
+- Restart the Flask application
+- Or set environment variable: `$env:GEMINI_API_KEY = "your_key"`
+
+**Issue:** "Database is locked"
+- Close any open database connections
+- Restart the Flask application
+- Check no other instances are running
+
 ---
 
-## Features Overview
+## Code Sample/Link to Hosted Website
 
-### 🏠 Home Page
-- Welcome screen with platform overview
-- Quick navigation to login/register
-- Feature highlights
+## <span style="color:#1f6feb; font-size:1.35em;">📦 GitHub Repository</span>
 
-### 👤 User Dashboard
-- View charging session history
-- Track statistics (total sessions, units charged, green score)
-- Quick access to all user features
-- Menu items for:
-  - Google Maps Search
-  - AI Chat Assistant
-  - Station Analytics
-  - Personal Insights
-  - Natural Language Search
+🔗 **Repository Link:**  
+https://github.com/jadhavbhavesh032-code/smart-ev-charging
 
-### 🗺️ Google Maps Search
-**Path:** `/user/map-search`
-- Interactive map with color-coded station markers
-- Three search modes:
-  1. **All Stations** - Browse all available stations
-  2. **Nearby** - Find stations within specified radius using geolocation
-  3. **Filter** - Search by green score, price, and charger count
-- One-click booking from map
-- Real-time distance calculation
 
-### 🤖 AI Chat Assistant
-**Path:** `/user/chat`
-- 24/7 AI chatbot for customer support
-- Answers questions about:
-  - Charging station locations and features
-  - Pricing information
-  - Troubleshooting
-  - Eco-friendly options
-  - Booking assistance
-- Example query buttons for quick help
-- Natural conversation interface
+## <span style="color:#1f6feb; font-size:1.35em;">🚀 Deployment</span> 
 
-### 📊 Predictive Analytics
-**Path:** `/user/station-analytics/<station_name>`
-- Peak usage hour analysis with intensity levels
-- 7-day demand forecast with confidence scores
-- 30-day price trend analysis
-- Station efficiency ratings
-- Historical activity tracking
-- Visual charts and heatmaps
+- **Production:**  
+  https://smart-ev-charging.onrender.com
 
-### 👁️ Personal Insights
-**Path:** `/user/insights`
-- Charging statistics and habits
-- Spending analysis (7/14/30 days)
-- Environmental impact metrics (CO₂ saved, equivalent trees)
-- Favorite stations ranking
-- AI-powered recommendations
-- Eco-rating and green score
 
-### 🔍 Natural Language Search
-**Path:** `/user/nl-search`
-- Search for stations using natural text
-- Automatic intent parsing:
-  - "cheap" → low price filter
-  - "fast" → high charger capacity
-  - "green/eco" → high green score
-  - "near" → nearby location filter
-- Intelligent result ranking
-- Example searches provided
+## <span style="color:#1f6feb; font-size:1.35em;">🎥 Demo Video</span>
 
-### 👨‍💼 Station Owner Dashboard
-**Path:** `/owner/dashboard`
-- Manage owned charging stations
-- View revenue and user statistics
-- Monitor station performance
-- Add and edit stations
-- View active charging sessions
+▶️ **Watch Demo:**  
+https://drive.google.com/file/d/1sxRucvn68sS_PPAdoi_TwBxTrCbmyPyT/view?usp=drive_link
 
-### 🛡️ Admin Dashboard
-**Path:** `/admin/dashboard`
-- Monitor all platform activity
-- User management
-- Station approval and verification
-- Revenue tracking
-- System statistics
-- User and station editing capabilities
+### API Keys Required
+- Google Maps API: [https://console.cloud.google.com/](https://console.cloud.google.com/)
+- Gemini AI API: [https://console.ai.google.com/](https://console.ai.google.com/)
+
+### Documentation Files
+- `FEATURES_OVERVIEW.md` - Detailed feature descriptions
+- `DEPLOYMENT_CHECKLIST.md` - Production deployment guide
+- `GOOGLE_MAPS_FEATURE_GUIDE.md` - Maps feature documentation
+- `GEMINI_SETUP_COMPLETE.md` - AI setup instructions
 
 ---
 
@@ -322,91 +290,5 @@ def get_chatbot_response(user_query, context):
     return response.text
 ```
 
----
 
-## Project Links & Resources
 
-### GitHub Repository
-[GitHub Link - To be added when repository is published]
-
-### Deployment
-- **Local:** http://localhost:5000
-- **Production:** [To be deployed]
-
-### API Keys Required
-- Google Maps API: [https://console.cloud.google.com/](https://console.cloud.google.com/)
-- Gemini AI API: [https://console.ai.google.com/](https://console.ai.google.com/)
-
-### Documentation Files
-- `FEATURES_OVERVIEW.md` - Detailed feature descriptions
-- `DEPLOYMENT_CHECKLIST.md` - Production deployment guide
-- `GOOGLE_MAPS_FEATURE_GUIDE.md` - Maps feature documentation
-- `GEMINI_SETUP_COMPLETE.md` - AI setup instructions
-
----
-
-## Key Project Statistics
-
-- **Total Python Files:** 20+
-- **HTML Templates:** 18
-- **AI Features:** 4 (Chatbot, Analytics, Insights, NL Search)
-- **User Roles:** 3 (User, Owner, Admin)
-- **Database Tables:** 5 (Users, Stations, Sessions, Admin, Queue)
-- **API Integrations:** 2 (Google Maps, Google Gemini)
-- **Lines of Code:** 3000+
-
----
-
-## Troubleshooting
-
-### Common Issues & Solutions
-
-**Issue:** "ModuleNotFoundError: No module named 'flask'"
-```bash
-# Solution: Install dependencies
-pip install -r requirements.txt
-```
-
-**Issue:** "Google Maps API key not valid"
-- Verify API key in `.env` file
-- Ensure Maps JavaScript API is enabled in Google Cloud Console
-- Check API key restrictions
-
-**Issue:** "GEMINI_API_KEY environment variable not found"
-- Create `.env` file with your API key
-- Restart the Flask application
-- Or set environment variable: `$env:GEMINI_API_KEY = "your_key"`
-
-**Issue:** "Database is locked"
-- Close any open database connections
-- Restart the Flask application
-- Check no other instances are running
-
----
-
-## Future Enhancements
-
-1. **Payment Integration** - Real payment processing with multiple gateways
-2. **Mobile App** - Native iOS/Android applications
-3. **Real-time Notifications** - Push notifications for users and owners
-4. **Advanced Reporting** - Export analytics to PDF/Excel
-5. **Machine Learning** - Demand prediction model
-6. **Rating System** - User reviews for stations
-7. **Loyalty Program** - Rewards for frequent users
-8. **EV Compatibility** - Filter stations by vehicle type
-9. **Energy Source** - Filter by renewable energy sources
-10. **API Documentation** - RESTful API for third-party integrations
-
----
-
-## Contact & Support
-
-For questions or support, please reach out to the team:
-- Sachin Jha
-- Prince Jha
-- Bhavesh Jadhav
-
----
-
-**Last Updated:** January 24, 2026
-**Version:** 1.0 - Release Candidate
